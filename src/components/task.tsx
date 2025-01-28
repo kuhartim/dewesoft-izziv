@@ -1,6 +1,22 @@
 import { TaskStatus } from "@/types/task.types";
-import { Card, CardBody, Text, Button, ButtonGroup } from "@chakra-ui/react";
-import { HiOutlineStar } from "react-icons/hi";
+import {
+  Card,
+  CardBody,
+  Text,
+  Button,
+  ButtonGroup,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { HiOutlineStar, HiOutlineTrash } from "react-icons/hi";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 
 interface TaskProps {
   important?: boolean;
@@ -8,6 +24,7 @@ interface TaskProps {
   status: TaskStatus;
   onStatusChange: (status: TaskStatus) => void;
   onImportantToggle?: () => void;
+  onDelete: () => void;
 }
 
 const Task = ({
@@ -16,7 +33,19 @@ const Task = ({
   status,
   onStatusChange,
   onImportantToggle,
+  onDelete,
 }: TaskProps) => {
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
+
+  const onTaskDelete = () => {
+    onDeleteModalClose();
+    onDelete();
+  };
+
   const color = (() => {
     if (important) {
       switch (status) {
@@ -63,6 +92,7 @@ const Task = ({
           marginBottom={0.5}
           flexGrow={1}
           textDecoration={status === TaskStatus.DONE ? "line-through" : "none"}
+          px="10px"
         >
           {text}
         </Text>
@@ -105,6 +135,46 @@ const Task = ({
             DONE
           </Button>
         </ButtonGroup>
+        <>
+          <Button
+            size="sm"
+            variant="ghost"
+            aspectRatio={1}
+            _hover={{ bg: `red.100` }}
+            p="0"
+            color="red.500"
+            onClick={onDeleteModalOpen}
+          >
+            <HiOutlineTrash size={20} />
+          </Button>
+          <Modal
+            isOpen={isDeleteModalOpen}
+            onClose={onDeleteModalClose}
+            isCentered
+            motionPreset="slideInBottom"
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Delete existing task</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text>
+                  Are you sure you want to delete task &quot;{text}&quot;
+                </Text>
+              </ModalBody>
+              <ModalFooter marginTop="4">
+                <ButtonGroup>
+                  <Button colorScheme="gray" onClick={onDeleteModalClose}>
+                    Cancel
+                  </Button>
+                  <Button colorScheme="red" onClick={onTaskDelete}>
+                    Delete
+                  </Button>
+                </ButtonGroup>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
       </CardBody>
     </Card>
   );

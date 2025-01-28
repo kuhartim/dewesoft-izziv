@@ -13,13 +13,16 @@ import SearchInput from "@/components/search";
 export default function Page() {
   useHydrateTasks();
   const [searchString, setSearchString] = useState("");
-  const { tasks, isLoaded, updateTask } = useTasks(searchString);
+  const { tasks, isLoaded, updateTask, removeTask } = useTasks(searchString);
 
   const onImportantToggle = (id: string, important: boolean) => {
     updateTask(id, { important });
   };
   const onStatusChange = (id: string, status: TaskStatus) => {
     updateTask(id, { status });
+  };
+  const onTaskDelete = (id: string) => {
+    removeTask(id);
   };
 
   return (
@@ -71,6 +74,7 @@ export default function Page() {
                 onStatusChange={(newStatus) =>
                   onStatusChange(task.created, newStatus)
                 }
+                onDelete={() => onTaskDelete(task.created)}
               />
             </motion.div>
           ))}
