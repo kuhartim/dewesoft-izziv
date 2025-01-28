@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Spinner } from "@chakra-ui/react";
 import { useState } from "react";
 import SearchInput from "@/components/search";
+import StatsComponent from "@/components/stats";
 
 export default function Page() {
   useHydrateTasks();
@@ -39,6 +40,7 @@ export default function Page() {
           <Heading>Tasks</Heading>
           <NewTask />
         </Box>
+        <StatsComponent />
         <SearchInput
           value={searchString}
           onChange={setSearchString}
