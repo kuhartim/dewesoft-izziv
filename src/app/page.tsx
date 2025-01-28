@@ -26,6 +26,8 @@ export default function Page() {
     removeTask(id);
   };
 
+  console.log("tasks", tasks);
+
   return (
     <Stack
       maxWidth={600}
@@ -60,11 +62,16 @@ export default function Page() {
           {tasks.map((task) => (
             <motion.div
               key={task.created}
-              layout
+              layout="position"
               initial={{ opacity: 0, y: -20 }} // Initial animation state
               animate={{ opacity: 1, y: 0 }} // Animate to this state
               exit={{ opacity: 0, y: -20 }} // Animate when removed
-              transition={{ type: "spring", damping: 20, stiffness: 300 }} // Smooth spring animation
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+                duration: 0.2,
+              }} // Smooth spring animation
             >
               <Task
                 text={task.name}

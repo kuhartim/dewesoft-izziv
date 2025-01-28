@@ -120,7 +120,7 @@ const NewTask = () => {
                 width="100%"
                 type="submit"
               >
-                AddTask
+                Add Task
               </Button>
             </ModalFooter>
           </form>

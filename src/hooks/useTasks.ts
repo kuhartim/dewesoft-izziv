@@ -34,16 +34,29 @@ const useTasks = (searchString = "") => {
       task.name.toLowerCase().includes(searchString.toLowerCase())
     )
     .sort((a, b) => {
-      // Sort by importance (important tasks first)
-      if (a.important && !b.important) return -1;
-      if (!a.important && b.important) return 1;
-
       // Sort by status: DOING > TODO > DONE
       const statusOrder = {
         [TaskStatus.DOING]: 1,
         [TaskStatus.TODO]: 2,
         [TaskStatus.DONE]: 3,
       };
+
+      // If both tasks are DONE, sort by importance
+      if (a.status === TaskStatus.DONE && b.status === TaskStatus.DONE) {
+        if (a.important && !b.important) return -1;
+        if (!a.important && b.important) return 1;
+        return 0;
+      }
+
+      // If one task is DONE, it should be at the end
+      if (a.status === TaskStatus.DONE) return 1;
+      if (b.status === TaskStatus.DONE) return -1;
+
+      // Sort by importance (important tasks first)
+      if (a.important && !b.important) return -1;
+      if (!a.important && b.important) return 1;
+
+      // Sort by status
       return statusOrder[a.status] - statusOrder[b.status];
     });
 

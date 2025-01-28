@@ -93,10 +93,16 @@ const Task = ({
           flexGrow={1}
           textDecoration={status === TaskStatus.DONE ? "line-through" : "none"}
           px="10px"
+          wordBreak="break-all"
         >
           {text}
         </Text>
-        <ButtonGroup isAttached size="xs" variant="ghost">
+        <ButtonGroup
+          isAttached
+          size="xs"
+          variant="ghost"
+          flexDirection={{ base: "column", sm: "row" }}
+        >
           <Button
             {...(important && status == TaskStatus.TODO
               ? { variant: "solid", bgColor: "orange.200" }

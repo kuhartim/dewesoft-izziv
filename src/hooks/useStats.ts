@@ -1,9 +1,10 @@
-import { tasksAtom } from "@/atoms/tasks.atoms";
+import { areTasksLoadedAtom, tasksAtom } from "@/atoms/tasks.atoms";
 import { TaskStatus } from "@/types/task.types";
 import { useAtomValue } from "jotai";
 
 const useStats = () => {
   const tasks = useAtomValue(tasksAtom);
+  const areTasksLoaded = useAtomValue(areTasksLoadedAtom);
 
   const totalTasks = tasks.length;
   const tasksToDo = tasks.filter(
@@ -21,6 +22,7 @@ const useStats = () => {
     tasksToDo,
     tasksDoing,
     tasksDone,
+    isLoaded: areTasksLoaded,
   };
 };
 
