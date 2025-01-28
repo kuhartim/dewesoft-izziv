@@ -31,9 +31,14 @@ const Task = ({
 }: TaskProps) => {
   const color = (() => {
     if (important) {
-      if (status === TaskStatus.DONE) return "gray";
-
-      return "yellow";
+      switch (status) {
+        case TaskStatus.TODO:
+          return "orange";
+        case TaskStatus.DOING:
+          return "yellow";
+        case TaskStatus.DONE:
+          return "gray";
+      }
     }
 
     switch (status) {
@@ -76,11 +81,11 @@ const Task = ({
         <ButtonGroup isAttached size="xs" variant="ghost">
           <Button
             {...(important && status == TaskStatus.TODO
-              ? { variant: "solid", bgColor: "yellow.200" }
+              ? { variant: "solid", bgColor: "orange.200" }
               : status == TaskStatus.TODO
               ? { variant: "solid", bgColor: "red.200" }
               : {})}
-            _hover={important ? { bg: "yellow.100" } : { bg: "red.100" }}
+            _hover={important ? { bg: "orange.100" } : { bg: "red.100" }}
             onClick={() => onStatusChange(TaskStatus.TODO)}
             fontWeight={700}
             color="gray.700"
