@@ -1,13 +1,19 @@
 "use client";
 import NewTask from "@/components/new-task";
 import Task from "@/components/task";
+import useHydrateTasks from "@/hooks/useHydrateTasks";
 import useTasks from "@/hooks/useTasks";
 import { TaskStatus } from "@/types/task.types";
-import { Box, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import { Box, Heading, Stack, Text } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Spinner } from "@chakra-ui/react";
 import { useState } from "react";
+import SearchInput from "@/components/search";
 
 export default function Page() {
-  const { tasks, updateTask } = useTasks();
+  useHydrateTasks();
+  const [searchString, setSearchString] = useState("");
+  const { tasks, isLoaded, updateTask } = useTasks(searchString);
 
   const onImportantToggle = (id: string, important: boolean) => {
     updateTask(id, { important });
@@ -30,24 +36,45 @@ export default function Page() {
           <Heading>Tasks</Heading>
           <NewTask />
         </Box>
-        <Input placeholder="Search tasks" />
+        <SearchInput
+          value={searchString}
+          onChange={setSearchString}
+          placeholder="Search tasks"
+        />
       </Stack>
-      {tasks.length === 0 && <Text color="gray.400">No tasks yet</Text>}
+      {!isLoaded && <Spinner />}
+      {tasks.length === 0 && isLoaded && (
+        <Text color="gray.400" textAlign="center" wordBreak="break-all">
+          {searchString
+            ? `No tasks found for "${searchString}"`
+            : "No tasks yet"}
+        </Text>
+      )}
       <Stack width="100%">
-        {tasks.map((task) => (
-          <Task
-            key={task.created}
-            text={task.name}
-            status={task.status}
-            important={task.important}
-            onImportantToggle={() =>
-              onImportantToggle(task.created, !task.important)
-            }
-            onStatusChange={(newStatus) =>
-              onStatusChange(task.created, newStatus)
-            }
-          />
-        ))}
+        <AnimatePresence>
+          {tasks.map((task) => (
+            <motion.div
+              key={task.created}
+              layout
+              initial={{ opacity: 0, y: -20 }} // Initial animation state
+              animate={{ opacity: 1, y: 0 }} // Animate to this state
+              exit={{ opacity: 0, y: -20 }} // Animate when removed
+              transition={{ type: "spring", damping: 20, stiffness: 300 }} // Smooth spring animation
+            >
+              <Task
+                text={task.name}
+                status={task.status}
+                important={task.important}
+                onImportantToggle={() =>
+                  onImportantToggle(task.created, !task.important)
+                }
+                onStatusChange={(newStatus) =>
+                  onStatusChange(task.created, newStatus)
+                }
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </Stack>
     </Stack>
   );

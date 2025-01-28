@@ -1,12 +1,5 @@
 import { TaskStatus } from "@/types/task.types";
-import {
-  Card,
-  CardBody,
-  Text,
-  Button,
-  Select,
-  ButtonGroup,
-} from "@chakra-ui/react";
+import { Card, CardBody, Text, Button, ButtonGroup } from "@chakra-ui/react";
 import { HiOutlineStar } from "react-icons/hi";
 
 interface TaskProps {

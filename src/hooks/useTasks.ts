@@ -1,22 +1,10 @@
+import { areTasksLoadedAtom, tasksAtom } from "@/atoms/tasks.atoms";
 import { Task, TaskStatus } from "@/types/task.types";
-import { useState, useEffect } from "react";
+import { useAtom, useAtomValue } from "jotai";
 
-const loadTasksFromLocalStorage = (): Task[] => {
-  const savedTasks = localStorage.getItem("tasks");
-  return savedTasks ? JSON.parse(savedTasks) : [];
-};
-
-const saveTasksToLocalStorage = (tasks: Task[]) => {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-};
-
-// TODO: State managment for tasks, Jotai
-const useTasks = () => {
-  const [tasks, setTasks] = useState<Task[]>(loadTasksFromLocalStorage());
-
-  useEffect(() => {
-    saveTasksToLocalStorage(tasks);
-  }, [tasks]);
+const useTasks = (searchString = "") => {
+  const [tasks, setTasks] = useAtom<Task[]>(tasksAtom);
+  const areTasksLoaded = useAtomValue(areTasksLoadedAtom);
 
   const addTask = (task: Omit<Task, "created" | "status">) => {
     const newTask: Task = {
@@ -39,7 +27,33 @@ const useTasks = () => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.created !== id));
   };
 
-  return { tasks, addTask, updateTask, removeTask };
+  // Sort tasks by importance and status
+  const sortedTasks = tasks
+    .slice() // Create a copy to avoid mutating the original array
+    .filter((task) =>
+      task.name.toLowerCase().includes(searchString.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Sort by importance (important tasks first)
+      if (a.important && !b.important) return -1;
+      if (!a.important && b.important) return 1;
+
+      // Sort by status: DOING > TODO > DONE
+      const statusOrder = {
+        [TaskStatus.DOING]: 1,
+        [TaskStatus.TODO]: 2,
+        [TaskStatus.DONE]: 3,
+      };
+      return statusOrder[a.status] - statusOrder[b.status];
+    });
+
+  return {
+    tasks: sortedTasks,
+    addTask,
+    updateTask,
+    removeTask,
+    isLoaded: areTasksLoaded,
+  };
 };
 
 export default useTasks;
