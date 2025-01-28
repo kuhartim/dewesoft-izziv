@@ -1,12 +1,21 @@
 "use client";
 import NewTask from "@/components/new-task";
-import Task, { TaskStatus } from "@/components/task";
+import Task from "@/components/task";
+import useTasks from "@/hooks/useTasks";
+import { TaskStatus } from "@/types/task.types";
 import { Box, Heading, Input, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
 export default function Page() {
-  const [status, setStatus] = useState<TaskStatus>(TaskStatus.TODO);
-  const [important, setImportant] = useState<boolean>(false);
+  const { tasks, updateTask } = useTasks();
+
+  const onImportantToggle = (id: string, important: boolean) => {
+    updateTask(id, { important });
+  };
+  const onStatusChange = (id: string, status: TaskStatus) => {
+    updateTask(id, { status });
+  };
+
   return (
     <Stack
       maxWidth={600}
@@ -23,15 +32,22 @@ export default function Page() {
         </Box>
         <Input placeholder="Search tasks" />
       </Stack>
-      <Text color="gray.400">No tasks yet</Text>
+      {tasks.length === 0 && <Text color="gray.400">No tasks yet</Text>}
       <Stack width="100%">
-        <Task
-          text="Car wash"
-          status={status}
-          important={important}
-          onImportantToggle={() => setImportant((prev) => !prev)}
-          onStatusChange={setStatus}
-        />
+        {tasks.map((task) => (
+          <Task
+            key={task.created}
+            text={task.name}
+            status={task.status}
+            important={task.important}
+            onImportantToggle={() =>
+              onImportantToggle(task.created, !task.important)
+            }
+            onStatusChange={(newStatus) =>
+              onStatusChange(task.created, newStatus)
+            }
+          />
+        ))}
       </Stack>
     </Stack>
   );

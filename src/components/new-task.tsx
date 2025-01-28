@@ -17,9 +17,47 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
+import useTasks from "@/hooks/useTasks";
+import { useEffect, useState } from "react";
 
 const NewTask = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { addTask } = useTasks();
+
+  const [taskName, setTaskName] = useState<string>("");
+  const [important, setImportant] = useState<boolean>(false);
+
+  const [isTaskError, setIsTaskError] = useState<boolean>(false);
+
+  const onTaskNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsTaskError(false);
+    setTaskName(e.target.value);
+  };
+  const onImportantToggle = () => setImportant((prev) => !prev);
+
+  const onAdd = () => {
+    if (!taskName) {
+      setIsTaskError(true);
+      return;
+    }
+
+    setIsTaskError(false);
+
+    addTask({
+      name: taskName,
+      important: important,
+    });
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTaskName("");
+      setImportant(false);
+    }
+  }, [isOpen]);
+
   return (
     <>
       <Button
@@ -45,9 +83,13 @@ const NewTask = () => {
           <ModalHeader>Add new task</ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDirection="column" gap="6">
-            <FormControl id="task" isRequired>
+            <FormControl id="task" isRequired isInvalid={isTaskError}>
               <FormLabel>Task name</FormLabel>
-              <Input placeholder="Wash a car" />
+              <Input
+                value={taskName}
+                onChange={onTaskNameChange}
+                placeholder="Wash a car"
+              />
               <FormErrorMessage>Task name is required.</FormErrorMessage>
             </FormControl>
             <FormControl
@@ -56,7 +98,11 @@ const NewTask = () => {
               alignItems="center"
               gap="2"
             >
-              <Switch size="lg" />
+              <Switch
+                isChecked={important}
+                onChange={onImportantToggle}
+                size="lg"
+              />
               <FormLabel margin={0} marginBottom={0.5}>
                 Mark as important
               </FormLabel>
@@ -68,7 +114,7 @@ const NewTask = () => {
               bg="black"
               color="white"
               _hover={{ bg: "gray.700" }}
-              onClick={onClose}
+              onClick={onAdd}
               width="100%"
             >
               AddTask

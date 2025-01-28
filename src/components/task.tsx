@@ -1,3 +1,4 @@
+import { TaskStatus } from "@/types/task.types";
 import {
   Card,
   CardBody,
@@ -7,12 +8,6 @@ import {
   ButtonGroup,
 } from "@chakra-ui/react";
 import { HiOutlineStar } from "react-icons/hi";
-
-export enum TaskStatus {
-  TODO = "To-Do",
-  DOING = "Doing",
-  DONE = "Done",
-}
 
 interface TaskProps {
   important?: boolean;
@@ -85,7 +80,7 @@ const Task = ({
               : status == TaskStatus.TODO
               ? { variant: "solid", bgColor: "red.200" }
               : {})}
-            _hover={important ? { bg: "orange.100" } : { bg: "red.100" }}
+            _hover={{ bg: `${color}.100` }}
             onClick={() => onStatusChange(TaskStatus.TODO)}
             fontWeight={700}
             color="gray.700"
@@ -98,7 +93,7 @@ const Task = ({
               : status == TaskStatus.DOING
               ? { variant: "solid", bgColor: "green.200" }
               : {})}
-            _hover={important ? { bg: "yellow.100" } : { bg: "green.100" }}
+            _hover={{ bg: `${color}.100` }}
             onClick={() => onStatusChange(TaskStatus.DOING)}
             fontWeight={700}
             color="gray.700"
@@ -109,7 +104,7 @@ const Task = ({
             {...(status == TaskStatus.DONE
               ? { variant: "solid", bgColor: "gray.200" }
               : {})}
-            _hover={{ bg: "gray.100" }}
+            _hover={{ bg: `${color}.100` }}
             onClick={() => onStatusChange(TaskStatus.DONE)}
             fontWeight={700}
             color="gray.700"
