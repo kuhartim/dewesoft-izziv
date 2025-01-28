@@ -80,7 +80,7 @@ const Task = ({
               : status == TaskStatus.TODO
               ? { variant: "solid", bgColor: "red.200" }
               : {})}
-            _hover={important ? { bg: "yellow.100" } : { bg: "green.100" }}
+            _hover={important ? { bg: "yellow.100" } : { bg: "red.100" }}
             onClick={() => onStatusChange(TaskStatus.TODO)}
             fontWeight={700}
             color="gray.700"
@@ -104,7 +104,7 @@ const Task = ({
             {...(status == TaskStatus.DONE
               ? { variant: "solid", bgColor: "gray.200" }
               : {})}
-            _hover={important ? { bg: "yellow.100" } : { bg: "green.100" }}
+            _hover={{ bg: "gray.100" }}
             onClick={() => onStatusChange(TaskStatus.DONE)}
             fontWeight={700}
             color="gray.700"
