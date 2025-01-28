@@ -58,7 +58,7 @@ export default function Page() {
         </Text>
       )}
       <Stack width="100%">
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {tasks.map((task) => (
             <motion.div
               key={task.created}
